@@ -1,0 +1,88 @@
+{
+  "driver_sha256": "01b1c4399edaec37fbe5decdb8f5ff5da94e3d8993a9d70755e068c4d64582c0",
+  "providers": [
+    {
+      "guid": "{07875362-2572-4AF4-9180-1C36C818B22C}",
+      "file_offset": "0x2530a8"
+    },
+    {
+      "guid": "{07C3CBFA-D7AE-48FF-BCE2-6623346B62D4}",
+      "file_offset": "0x2530f8"
+    },
+    {
+      "guid": "{12FFFA79-16DC-4986-BDEA-6606EF03584B}",
+      "file_offset": "0x2530e8"
+    },
+    {
+      "guid": "{361B784D-A9F5-4659-92CD-A79774CD95A6}",
+      "file_offset": "0x253068"
+    },
+    {
+      "guid": "{4472937D-3D35-4BA0-AC2A-6E779B195322}",
+      "file_offset": "0x253178"
+    },
+    {
+      "guid": "{4CE7FA12-127E-4BBD-9949-C5B088742DAA}",
+      "file_offset": "0x253098"
+    },
+    {
+      "guid": "{6A660F9B-5D03-494A-881C-26E30A3CE1B7}",
+      "file_offset": "0x253048"
+    },
+    {
+      "guid": "{6EC664B6-A13A-4C0E-897C-1481E3AFAB17}",
+      "file_offset": "0x253108"
+    },
+    {
+      "guid": "{7ECDEAF5-AF6A-493B-A2D9-EC8A6A4781AE}",
+      "file_offset": "0x253138"
+    },
+    {
+      "guid": "{808460D5-F550-42F8-902D-74723FE4D9D9}",
+      "file_offset": "0x2530c8"
+    },
+    {
+      "guid": "{A5AF555D-0A4E-4CCA-A649-DE861EBA1692}",
+      "file_offset": "0x253148"
+    },
+    {
+      "guid": "{A94493D6-648E-4A6C-91DF-985EC049D0AE}",
+      "file_offset": "0x2530d8"
+    },
+    {
+      "guid": "{D1FF9A81-01F9-4359-A2F0-62D9F2CCED28}",
+      "file_offset": "0x253128"
+    },
+    {
+      "guid": "{DC8ACB45-FB1B-4F37-9B85-57708682EF51}",
+      "file_offset": "0x253168"
+    },
+    {
+      "guid": "{E0CB17B6-C0D8-4455-9FB7-1E733AA594AF}",
+      "file_offset": "0x253058"
+    },
+    {
+      "guid": "{EEDF348E-7565-4C2B-89F9-57320084B038}",
+      "file_offset": "0x2530b8"
+    },
+    {
+      "guid": "{F5751CDE-1671-496A-A738-1460C43BE40E}",
+      "file_offset": "0x253078"
+    },
+    {
+      "guid": "{9C205A39-1250-487D-ABD7-E831C6290539}",
+      "name": "Microsoft-Windows-Kernel-PnP"
+    },
+    {
+      "guid": "{CDEAD503-17F5-4A3E-B7AE-DF8CC2902EB9}",
+      "name": "Microsoft-Windows-NDIS"
+    }
+  ],
+  "wpp_format_guids": {
+    "power_callbacks": "99a39866-83dd-3ada-0a57-90cabd1e0858",
+    "mt7925_bootstrap": "cea3c0f5-7cb4-320a-0935-37f0a1209327",
+    "firmware_ownership": "1cc9eb33-7b4f-322b-4a1c-3602a3995196"
+  },
+  "diagnostic_only": true,
+  "notes": "Addresses and message meanings inferred from static disassembly; not proof that a branch ran during the failure."
+}
