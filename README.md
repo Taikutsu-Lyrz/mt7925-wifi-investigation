@@ -2,7 +2,7 @@
 
 Technical findings from a Windows Code 10 failure involving the MediaTek MT7925: startup traces, country-table behavior, a persistent configuration workaround, and an **uninstalled experimental binary candidate**.
 
-**Status updated 2026-09-24:** My persistent BR configuration override survived a full reboot; immediately afterward the adapter reported OK and Wi-Fi connected at 1.2 Gbps. I have used the laptop for several days and repeatedly tried to reproduce the triggers that used to break Wi-Fi, but it has continued working normally. I did not collect a continuous trace or a formal test log during those days. This is good real-world evidence that the workaround is effective on my laptop. The original signed driver remains installed; **no patched driver is installed.**
+**Status updated 2026-10-03:** Wi-Fi is still working normally, about 12 days after I applied the persistent BR configuration override on September 21. I have repeatedly tried to recreate the problem using the triggers that previously broke Wi-Fi, and I have not been able to reproduce the failure. The settings also survived the full reboot checked on September 21. This sustained result gives me stronger confidence that the workaround resolves the reported problem on my laptop. I did not keep a continuous trace or formal test log during this follow-up, and this result does not establish a fix for every MT7925 system. The original signed driver remains installed; **no patched driver is installed.**
 
 This report documents a single-system case study, not a universal MT7925 fix or a vendor-supported driver distribution. Recorded evidence, static-analysis inferences, and reported symptoms are distinguished below.
 
@@ -37,6 +37,7 @@ The parent PCIe port reported OK while the Wi-Fi device failed. Old, non-present
 6. Static analysis of this exact binary found an all-zero AF selection mask in a shared 2.4/5 GHz country table. BR's mask selects ten subbands.
 7. A live AF-setting experiment did **not** reproduce Code 10: the adapter restarted successfully, and the saved country was BR afterward. During the AF test, network discovery was reported to show only one device/network and stop discovering normally. No scan-count measurement was captured to independently verify that observation.
 8. After I applied the BR override, I rebooted the laptop. The country settings remained BR with automatic country selection disabled, the adapter reported OK, and Wi-Fi connected at 1.2 Gbps. I have used it for several days and repeatedly tried to reproduce the previous failures; Wi-Fi continued working. I did not collect a new ETL capture or timestamped test log during this follow-up.
+9. On October 3, about 12 days after applying the override, Wi-Fi was still working normally. I again tried to recreate the previous problem and could not reproduce it. This extends the successful real-world follow-up beyond the initial September 24 report; it does not add a new instrumented test or independently establish the exact cause.
 
 These findings support an empty-country/channel-data hypothesis, but do not prove the complete failure chain in every reported incident. The source of BR selection, any role of VPN geolocation, and the reason for the AF table contents remain unresolved.
 
@@ -56,6 +57,7 @@ These findings support an empty-country/channel-data hypothesis, but do not prov
 | Sep 21 | Built offline AF-mask replacement | Exact byte checks passed; original retained; signature became HashMismatch; candidate not installed. |
 | Sep 21 | Rebooted after applying BR override | Country remained BR, automatic selection settings remained disabled, and Wi-Fi was up at 1.2 Gbps. |
 | Through Sep 24 | Used the laptop and repeatedly attempted to recreate prior failure | I had no recurrence over several days. I did not keep a continuous capture or formal test log. |
+| Oct 3 | Continued normal use and further attempts to recreate the failure | Wi-Fi was still working about 12 days after the override. I could not reproduce the old failure. This is a personal follow-up result, without a formal test log. |
 
 Times above use the test system's timezone (Asia/Kabul). A trace started after the failure cannot reconstruct the preceding startup.
 
@@ -105,7 +107,7 @@ The original signed driver remains installed with these persistent advanced prop
 | CountryRoamingEn | 1 | 0 |
 | SmartCountryDecisionEn | 0 | 0 |
 
-**Verified:** the values survived an adapter restart and a full reboot. Wi-Fi was connected at 1.2 Gbps after each. The user reports several days of normal use and repeated reproduction attempts without recurrence. These tests suggest the workaround is effective for the reported failure on this machine. Sleep/wake and VPN reconnect behavior were not separately documented in a controlled log, and 6 GHz operation has not been validated. Reinstallation or driver updates may reset settings. No scheduled repair task is installed. BR's channel/power settings have not been validated for Afghanistan; observing nearby Wi-Fi does not establish permitted radio settings.
+**Verified on September 21:** the values survived an adapter restart and a full reboot. Wi-Fi was connected at 1.2 Gbps after each. **My follow-up through October 3:** Wi-Fi has continued working during normal use and repeated attempts to recreate the previous failure, about 12 days after applying the override. This supports the workaround's effectiveness for the reported problem on this machine. Sleep/wake and VPN reconnect behavior were not separately documented in a controlled log, and 6 GHz operation has not been validated. Reinstallation or driver updates may reset settings. No scheduled repair task is installed. BR's channel/power settings have not been validated for Afghanistan; observing nearby Wi-Fi does not establish permitted radio settings.
 
 The repair scripts identify the investigated Lenovo subsystem and require exactly one matching present Wi-Fi device. Review and adapt them before using on other hardware. From an administrator PowerShell in this repository:
 
