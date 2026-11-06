@@ -2,7 +2,7 @@
 
 Technical findings from a Windows Code 10 failure involving the MediaTek MT7925: startup traces, country-table behavior, a persistent configuration workaround, and an **uninstalled experimental binary candidate**.
 
-**Status updated 2026-10-03:** Wi-Fi is still working normally, about 12 days after I applied the persistent BR configuration override on September 21. I have repeatedly tried to recreate the problem using the triggers that previously broke Wi-Fi, and I have not been able to reproduce the failure. The settings also survived the full reboot checked on September 21. This sustained result gives me stronger confidence that the workaround resolves the reported problem on my laptop. I did not keep a continuous trace or formal test log during this follow-up, and this result does not establish a fix for every MT7925 system. The original signed driver remains installed; **no patched driver is installed.**
+**Status updated 2026-11-07:** Wi-Fi is still working normally, approximately 47 days after I applied the persistent BR configuration override on September 21. I have repeatedly tried to recreate the problem using the triggers that previously broke Wi-Fi, and I have not been able to reproduce the failure. The settings also survived the full reboot checked on September 21. This sustained result gives me stronger confidence that the workaround resolves the reported problem on my laptop. I did not keep a continuous trace or formal test log during this follow-up, and this result does not establish a fix for every MT7925 system. The original signed driver remains installed; **no patched driver is installed.**
 
 **Community follow-up (reported November 7, 2026):** A second user in Iraq, who first contacted the repository author on October 23 at 19:12, reported that a MediaTek MT7925 system previously experiencing frequent failures had remained stable for 14 days after disabling `DynamicCountryDecisionEn` and `CountryRoamingEn` while retaining `CountryRegionString=WW`. This is a self-reported result, not an independently verified diagnostic capture. The user also reported that Lenovo declined service for a US-market laptop used in Iraq; the reason and warranty policy have not been independently verified. The author separately reports continued stability on the original BR configuration through November 7 (approximately 47 days since September 21). Neither system used the experimental binary candidate. The two reports suggest disabling automatic country decisions/roaming may matter independently of choosing BR, but they do not isolate the causal setting or prove a universal fix.
 
@@ -41,6 +41,9 @@ The parent PCIe port reported OK while the Wi-Fi device failed. Old, non-present
 8. After I applied the BR override, I rebooted the laptop. The country settings remained BR with automatic country selection disabled, the adapter reported OK, and Wi-Fi connected at 1.2 Gbps. I have used it for several days and repeatedly tried to reproduce the previous failures; Wi-Fi continued working. I did not collect a new ETL capture or timestamped test log during this follow-up.
 9. On October 3, about 12 days after applying the override, Wi-Fi was still working normally. I again tried to recreate the previous problem and could not reproduce it. This extends the successful real-world follow-up beyond the initial September 24 report; it does not add a new instrumented test or independently establish the exact cause.
 
+10. On November 7, I reported continued stability for approximately 47 days after the September 21 BR configuration change, without a new instrumented test log.
+11. An independent user in Iraq reported 14 days without the frequent previous failures after disabling `DynamicCountryDecisionEn` and `CountryRoamingEn` while keeping `CountryRegionString=WW`. This is a self-reported observation; driver build and logs were not independently checked. The result suggests BR selection may not be necessary for every affected device.
+
 These findings support an empty-country/channel-data hypothesis, but do not prove the complete failure chain in every reported incident. The source of BR selection, any role of VPN geolocation, and the reason for the AF table contents remain unresolved.
 
 ## Timeline and experiments
@@ -60,8 +63,11 @@ These findings support an empty-country/channel-data hypothesis, but do not prov
 | Sep 21 | Rebooted after applying BR override | Country remained BR, automatic selection settings remained disabled, and Wi-Fi was up at 1.2 Gbps. |
 | Through Sep 24 | Used the laptop and repeatedly attempted to recreate prior failure | I had no recurrence over several days. I did not keep a continuous capture or formal test log. |
 | Oct 3 | Continued normal use and further attempts to recreate the failure | Wi-Fi was still working about 12 days after the override. I could not reproduce the old failure. This is a personal follow-up result, without a formal test log. |
+| Oct 23, 19:12 | First contact from an MT7925 user in Iraq | The user found this repository and later reported applying the same two disabled settings while retaining WW; exact application date was not established. |
+| Nov 7 | Author stability follow-up | Approximately 47 days without recurrence on BR configuration; no new formal trace. |
+| Nov 7 | Iraqi user's community follow-up reported | 14 days without recurrence on WW configuration, after frequent previous failures; self-reported, no independent logs. |
 
-Times above use the test system's timezone (Asia/Kabul). A trace started after the failure cannot reconstruct the preceding startup.
+Times for the original experiments use the test system's timezone (Asia/Kabul); the Iraqi contact time is as reported, without a confirmed timezone. A trace started after the failure cannot reconstruct the preceding startup.
 
 ## Reverse-engineering findings
 
@@ -100,7 +106,7 @@ WPP IDs and format GUIDs were matched to disassembly. This is not full payload d
 
 ## Applied workaround and rollback
 
-The original signed driver remains installed with these persistent advanced properties:
+The original signed driver remains installed with these persistent advanced properties on the investigated system:
 
 | Registry keyword | Previous | Applied |
 | --- | --- | --- |
@@ -109,7 +115,21 @@ The original signed driver remains installed with these persistent advanced prop
 | CountryRoamingEn | 1 | 0 |
 | SmartCountryDecisionEn | 0 | 0 |
 
-**Verified on September 21:** the values survived an adapter restart and a full reboot. Wi-Fi was connected at 1.2 Gbps after each. **My follow-up through October 3:** Wi-Fi has continued working during normal use and repeated attempts to recreate the previous failure, about 12 days after applying the override. This supports the workaround's effectiveness for the reported problem on this machine. Sleep/wake and VPN reconnect behavior were not separately documented in a controlled log, and 6 GHz operation has not been validated. Reinstallation or driver updates may reset settings. No scheduled repair task is installed. BR's channel/power settings have not been validated for Afghanistan; observing nearby Wi-Fi does not establish permitted radio settings.
+### Country configuration comparison (November 7 follow-up)
+
+| Setting / observation | Original investigated laptop | Independent Iraqi user (self-reported) |
+| --- | --- | --- |
+| Adapter | MediaTek MT7925 | MediaTek MT7925 |
+| `CountryRegionString` | `BR` | `WW` (unchanged) |
+| `DynamicCountryDecisionEn` | `0` (disabled) | `0` (disabled) |
+| `CountryRoamingEn` | `0` (disabled) | `0` (disabled) |
+| `SmartCountryDecisionEn` | `0` (already disabled) | Not independently confirmed |
+| Reported stable period | Approximately 47 days through Nov 7 | 14 days, reported Nov 7 |
+| Evidence | Original investigation and author's follow-up | User account; no logs supplied |
+
+The two reports share disabled dynamic-country and roaming options but **not** the same saved country. This weakens any claim that forcing BR is universally necessary. It does not demonstrate that WW is appropriate for all regions, identify which option prevents failure, or verify radio regulatory compliance. The experimental binary candidate was not used in either report. The Iraqi user also reported Lenovo declined warranty service for a US-market laptop used in Iraq; this is unverified and not a statement of Lenovo's general warranty policy.
+
+**Verified on September 21:** the values survived an adapter restart and a full reboot. Wi-Fi was connected at 1.2 Gbps after each. **My follow-up through November 7:** Wi-Fi has continued working during normal use and repeated attempts to recreate the previous failure, approximately 47 days after applying the override. This supports the workaround's effectiveness for the reported problem on this machine. Sleep/wake and VPN reconnect behavior were not separately documented in a controlled log, and 6 GHz operation has not been validated. Reinstallation or driver updates may reset settings. No scheduled repair task is installed. BR's channel/power settings have not been validated for Afghanistan; observing nearby Wi-Fi does not establish permitted radio settings.
 
 The repair scripts identify the investigated Lenovo subsystem and require exactly one matching present Wi-Fi device. Review and adapt them before using on other hardware. From an administrator PowerShell in this repository:
 
